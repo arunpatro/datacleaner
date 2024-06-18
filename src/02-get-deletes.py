@@ -94,6 +94,8 @@ def resolve(group: DuplicateGroup) -> Resolution:
     
     
 def generate_deletion_list(dups: list[DuplicateGroup]) -> list[str]:
+    if not dups:
+        return []
     """Generate a list of deletions for each duplicate group."""
     x = [dup.files for dup in dups]
     x = list(itertools.chain(*x))
@@ -107,7 +109,7 @@ df = df[~df.isna().any(axis=1) & (df.file_size > 0)]
 duplicates = df[df.duplicated(subset='file_md5', keep=False)].sort_values(by='file_size', ascending=False)
 duplicates['file_size_h'] = duplicates['file_size'].apply(convert_size)
 duplicates['folder'] = duplicates['file_path'].apply(lambda x: os.path.dirname(x))
-dupl_records = duplicates.groupby(['file_md5', 'file_size_h'], group_keys=False).apply(lambda x: x[['file_path', 'folder']].to_dict(orient='records')).to_dict()
+dupl_records = duplicates.groupby(['file_md5', 'file_size_h'], group_keys=False).apply(lambda x: x[['file_path', 'folder']].to_dict(orient='records'), include_groups=False).to_dict()
 
 ## get all the duplicate groups
 _dups = []
