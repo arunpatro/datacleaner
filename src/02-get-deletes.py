@@ -142,10 +142,13 @@ for pair, count in pairwise_counts.most_common():
 pairwise_df = pd.DataFrame(vals, columns=['common', 'folder1', 'folder2', 'count'])
 
 easy_deletes = [resolve(d) for d in _dups if resolve(d) is not None and resolve(d).category == ResolutionCategory.same_folder_diff_name]
-files_to_delete = generate_deletion_list(easy_deletes)
+
+files_to_delete = [f for f in df.file_path if os.path.basename(f) in DELETE_FILES]
+files_to_delete += generate_deletion_list(easy_deletes)
 
 print(f"Total duplicate volume: {get_duplicate_volume(duplicates)}")
 print(f"Total files to delete: {len(files_to_delete)}")
+
 for f in files_to_delete:
     print(f)
-    # os.remove(f)
+    os.remove(f)
