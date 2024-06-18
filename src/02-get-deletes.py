@@ -103,6 +103,9 @@ def generate_deletion_list(dups: list[DuplicateGroup]) -> list[str]:
     df['delete'] = ~df['keep']
     return df[df['delete']]['file_path'].tolist()
 
+
+#### Main script
+
 df = pd.read_csv("files_report.csv")
 df = df[~df.isna().any(axis=1) & (df.file_size > 0)]
 
@@ -145,6 +148,9 @@ easy_deletes = [resolve(d) for d in _dups if resolve(d) is not None and resolve(
 
 files_to_delete = [f for f in df.file_path if os.path.basename(f) in DELETE_FILES]
 files_to_delete += generate_deletion_list(easy_deletes)
+
+
+# TODO: Generate deletes from diff_folder_same_name
 
 print(f"Total duplicate volume: {get_duplicate_volume(duplicates)}")
 print(f"Total files to delete: {len(files_to_delete)}")
